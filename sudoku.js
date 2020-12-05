@@ -1,6 +1,6 @@
 /**
  * Checks if the filled cells of the specified Sudoku board are valid
- * @param {Array} b - A sudoku board
+ * @param {Array} b - A Sudoku board
  * @return {Boolean}
  */
 function isValid(b) {
@@ -49,14 +49,51 @@ function isValid(b) {
     return true;
 }
 
+/**
+ * Solves a valid Sudoku board
+ * @param {*} b - A Sudoku board
+ */
+function solve(b) {
+    // Board must be valid
+    if (isValid(b) === false) {
+        return false;
+    }
+    // Stores all empty cells in an array, used by helper function
+    var empty = [];
+    for (i  = 0; i < 9; i++) {
+        for (j = 0; j < 9; j++) {
+            var num = b[i][j];
+            if (num == 0) {
+                empty.push([i, j]);
+            }
+        }
+    }
+    // Fills all empty cells using recursive backtracking
+    for (var k = 0; k < empty.length; k++) {
+        if (solveHelper(b, k, empty) === true) {
+            console.log(b);
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Helper function for solve()
+ * @param {*} b - A Sudoku board
+ * @param {*} k - Empty cell counter
+ * @param {*} empty - Array of empty cells
+ */
 function solveHelper(b, k, empty) {
     var row = empty[k][0];
     var col = empty[k][1];
+    /* Recursively tests every combination of numbers for every empty
+    cell, as long as numbers do not violate Sudoku's rules
+    */
     for (var l = 1; l < 10; l++) {
         b[row][col] = l;
         if (isValid(b) === true) {
             if (k == empty.length - 1) {
-                testing = b;
                 return true;
             } else {
                 if (solveHelper(b, k + 1, empty) === true) {
@@ -69,29 +106,18 @@ function solveHelper(b, k, empty) {
     return false;
 }
 
-function solve(b) {
-    if (isValid(b) === false) {
-        return false;
-    }
-    var empty = [];
-    for (i  = 0; i < 9; i++) {
-        for (j = 0; j < 9; j++) {
-            var num = b[i][j];
-            if (num == 0) {
-                empty.push([i, j]);
-            }
-        }
-    }
-    for (var k = 0; k < empty.length; k++) {
-        if (solveHelper(b, k, empty) === true) {
-            console.log(b);
-            return true;
-        }
-    }
-    return false;
+function genBoard() {
+    newBoard = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]];
+    
 }
-
-
 
 
 
@@ -104,7 +130,7 @@ var test = [[2, 4, 6, 8, 5, 7, 9, 1, 3],
             [9, 5, 2, 1, 7, 6, 3, 4, 8],
             [7, 6, 4, 5, 3, 2, 8, 9, 1],
             [3, 2, 1, 9, 6, 8, 7, 5, 4],
-            [8, 9, 5, 7, 1, 4, 6, 0, 0]]
+            [8, 9, 5, 7, 1, 4, 6, 0, 0]];
 var board = [[2, 0, 0, 0, 0, 7, 0, 4, 0],
              [0, 0, 0, 0, 0, 9, 0, 0, 1],
              [3, 7, 0, 0, 0, 6, 0, 0, 0],
@@ -113,7 +139,7 @@ var board = [[2, 0, 0, 0, 0, 7, 0, 4, 0],
              [0, 0, 0, 0, 2, 0, 0, 3, 0],
              [0, 0, 0, 0, 0, 0, 1, 0, 0],
              [8, 0, 5, 0, 3, 0, 0, 2, 0],
-             [0, 4, 0, 0, 0, 0, 7, 0, 0]]
+             [0, 4, 0, 0, 0, 0, 7, 0, 0]];
 
 
 
