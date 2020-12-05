@@ -49,6 +49,7 @@ function isValid(b) {
     return true;
 }
 
+
 /**
  * Solves a valid Sudoku board
  * @param {*} b - A Sudoku board
@@ -106,18 +107,86 @@ function solveHelper(b, k, empty) {
     return false;
 }
 
-function genBoard() {
-    newBoard = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0]];
+
+/**
+ * Generates a new Sudoku puzzle
+ */
+function generate() {
+    var newBoard = [[1, 2, 3, 4, 5, 6, 7, 8, 9],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0]];
+    /* Randomizes first row of new puzzle, then each row after is a shift
+    of the previous row by 1 or 3 cells
+    */
+    newBoard[0] = generateHelper(newBoard[0]);
+    var prev = [...newBoard[0]];
+    for (i = 1; i < 9; i++) {
+        if (i == 1 || i == 2 || i == 4 || i == 5 || i == 7 || i == 8) {
+            for (j = 0; j < 3; j++) {
+                var num = prev.shift();
+                prev.push(num);
+            }
+        } else {
+            var num = prev.shift();
+            prev.push(num);
+        }
+        newBoard[i] = prev;
+        prev = [...newBoard[i]];
+    }
+
+    /* Further randomizes puzzle by shifting order of each row in each 
+    3-row group
+    */
+    var randomized = [];
+    var counter = 0;
+    var counter2 = 0;
+    for (j = 0; j < 3; j++) {
+        for (k = 0; k < 3; k++) {
+            randomized.push(newBoard[counter]);
+            counter += 1;
+        }
+        randomized = generateHelper(randomized);
+        for (l = 0; l < 3; l++) {
+            newBoard[counter2] = randomized[l];
+            counter2 += 1;
+        }
+        randomized = [];
+    }
+
     
+
+
+
+    return newBoard;
 }
+
+/**
+ * Helper function for generate()
+ * @param {*} a - An array of integers from 1 to 9
+ */
+function generateHelper(a) {
+    /* Utilizes the Durstenfeld shuffle, an optimized version of
+    the Fisher-Yates shuffle, to randomize the array of integers: 
+    https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+    */
+    for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+
+function print(b) {
+    console.table(b);
+}
+
 
 
 
@@ -142,6 +211,9 @@ var board = [[2, 0, 0, 0, 0, 7, 0, 4, 0],
              [0, 4, 0, 0, 0, 0, 7, 0, 0]];
 
 
-
+/*
 nice = solve(board);
 console.log(nice);
+*/
+testing = generate();
+console.log(isValid(testing));
