@@ -73,8 +73,7 @@ function solve(b) {
     // Fills all empty cells using recursive backtracking
     for (var k = 0; k < empty.length; k++) {
         if (solveHelper(b, k, empty) === true) {
-            console.log(b);
-            return true;
+            return b;
         } else {
             console.log("Cannot solve, no solution.");
             return false;
@@ -98,6 +97,10 @@ function solveHelper(b, k, empty) {
         b[row][col] = l;
         if (isValid(b) === true) {
             if (k == empty.length - 1) {
+                if (solCount != null) {
+                    solCount += 1;
+                    continue;
+                }
                 return true;
             } else {
                 if (solveHelper(b, k + 1, empty) === true) {
@@ -125,46 +128,46 @@ function generate() {
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0]];
     
-    var fillCount = 35;
-    while (fillCount > 0) {
-        ranRow = Math.floor(Math.random() * 9);
-        ranCol = Math.floor(Math.random() * 9);
-        if (newBoard[ranRow][ranCol] != 0) {
-            continue;
+    first = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    first = randomize(first);
+    newBoard[0] = first;
+    
+    while (solve(newBoard) === false) {
+        var ranRow = Math.floor(Math.random() * 9);
+        var ranCol = Math.floor(Math.random() * 9);
+        while (newBoard[ranRow][ranCol] != 0) {
+            ranRow = Math.floor(Math.random() * 9);
+            ranCol = Math.floor(Math.random() * 9);
         }
         newBoard[ranRow][ranCol] = Math.floor(Math.random() * 9) + 1;
-        if (isValid(newBoard) === true) {
-            fillCount -= 1;
-        } else {
+        if (isValid(newBoard) === false) {
             newBoard[ranRow][ranCol] = 0;
         }
     }
 
-
-
-
-    /*
-    while (true) {
+    var attempts = 5;
+    while (attempts > 0) {
         ranRow = Math.floor(Math.random() * 9);
         ranCol = Math.floor(Math.random() * 9);
-        ranCell = newBoard[ranRow][ranCol];
-        if (ranCell == 0) {
-            continue;
+        while (newBoard[ranRow][ranCol] == 0) {
+            ranRow = Math.floor(Math.random() * 9);
+            ranCol = Math.floor(Math.random() * 9);
         }
+        var backupNum = newBoard[ranRow][ranCol];
         newBoard[ranRow][ranCol] = 0;
-        copyBoard = [...newBoard];
-        solve(newBoard, true);
-        if (solCount > 1) {
-            newBoard = [...copyBoard];
-            newBoard[ranRow][ranCol] = ranCell;
-            solCount = 0;
-            break;
+        var copy = [];
+        for (z = 0; z < 9; z++) {
+            copy.push(newBoard[z]);
         }
+        solCount = 0;
+        solutions = solve(copy);
+        if (solCount != 1) {
+            newBoard[ranRow][ranCol] = backupNum;
+            attempts -= 1;
+        }
+
     }
-    */
-
-
-
+    solCount = null;
     return newBoard;
 }
 
@@ -172,9 +175,9 @@ function generate() {
  * Helper function for generate()
  * @param {Array} a - An array of integers from 1 to 9
  */
-function generateHelper(a) {
+function randomize(a) {
     /* Utilizes the Durstenfeld shuffle, an optimized version of
-    the Fisher-Yates shuffle, to randomize the array of integers: 
+    the Fisher-Yates shuffle, to randomize an array of integers: 
     https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
     */
     for (var i = a.length - 1; i > 0; i--) {
@@ -189,7 +192,7 @@ function print(b) {
     console.table(b);
 }
 
-
+var solCount = null;
 
 
 var test = [[2, 4, 6, 8, 5, 7, 9, 1, 3],
@@ -211,11 +214,9 @@ var board = [[2, 0, 0, 0, 0, 7, 0, 4, 0],
              [8, 0, 5, 0, 3, 0, 0, 2, 0],
              [0, 4, 0, 0, 0, 0, 7, 0, 0]];
 
-
-/*
-nice = solve(board);
-console.log(nice);
-*/
 testing = generate();
 print(testing);
-console.log(solve(testing));
+console.log(isValid(testing));
+solved = solve(testing);
+print(solved);
+console.log(isValid(solved));
