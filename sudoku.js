@@ -1,3 +1,6 @@
+var solCount = null;  // Keeps track of the solution count for a puzzle
+
+
 /**
  * Checks if the filled cells of the specified Sudoku board are valid
  * @param {Array} b - A Sudoku board
@@ -81,6 +84,7 @@ function solve(b) {
     }
 }
 
+
 /**
  * Helper function for solve()
  * @param {Array} b - A Sudoku board
@@ -116,8 +120,9 @@ function solveHelper(b, k, empty) {
 
 /**
  * Generates a new Sudoku puzzle
+ * @param {Number} attempts - Difficulty of puzzle, higher means more difficult
  */
-function generate() {
+function generate(attempts) {
     var newBoard = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -127,11 +132,11 @@ function generate() {
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0]];
-    
+    // Randomly fills first row of new board
     first = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     first = randomize(first);
     newBoard[0] = first;
-    
+    // Randomily fills rest of new board, creating a fully filled, valid board
     while (solve(newBoard) === false) {
         var ranRow = Math.floor(Math.random() * 9);
         var ranCol = Math.floor(Math.random() * 9);
@@ -144,8 +149,12 @@ function generate() {
             newBoard[ranRow][ranCol] = 0;
         }
     }
-
-    var attempts = 5;
+    /* Generates a new puzzle by removing one cell at a time then checking
+    the number of solutions possible with the board's current state. If
+    it is 1, then the function continues to run. If not, we reverse the
+    change made to the current cell and try again with a different cell on
+    the board, until all our attempts run out.
+    */
     while (attempts > 0) {
         ranRow = Math.floor(Math.random() * 9);
         ranCol = Math.floor(Math.random() * 9);
@@ -173,7 +182,7 @@ function generate() {
 
 /**
  * Helper function for generate()
- * @param {Array} a - An array of integers from 1 to 9
+ * @param {Array} a - An array of integers
  */
 function randomize(a) {
     /* Utilizes the Durstenfeld shuffle, an optimized version of
@@ -192,7 +201,6 @@ function print(b) {
     console.table(b);
 }
 
-var solCount = null;
 
 
 var test = [[2, 4, 6, 8, 5, 7, 9, 1, 3],
@@ -214,7 +222,7 @@ var board = [[2, 0, 0, 0, 0, 7, 0, 4, 0],
              [8, 0, 5, 0, 3, 0, 0, 2, 0],
              [0, 4, 0, 0, 0, 0, 7, 0, 0]];
 
-testing = generate();
+testing = generate(5);
 print(testing);
 console.log(isValid(testing));
 solved = solve(testing);
