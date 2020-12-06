@@ -52,7 +52,7 @@ function isValid(b) {
 
 /**
  * Solves a valid Sudoku board
- * @param {*} b - A Sudoku board
+ * @param {Array} b - A Sudoku board
  */
 function solve(b) {
     // Board must be valid
@@ -81,9 +81,9 @@ function solve(b) {
 
 /**
  * Helper function for solve()
- * @param {*} b - A Sudoku board
- * @param {*} k - Empty cell counter
- * @param {*} empty - Array of empty cells
+ * @param {Array} b - A Sudoku board
+ * @param {Number} k - Empty cell counter
+ * @param {Array} empty - Array of empty cells
  */
 function solveHelper(b, k, empty) {
     var row = empty[k][0];
@@ -168,7 +168,7 @@ function generate() {
 
 /**
  * Helper function for generate()
- * @param {*} a - An array of integers from 1 to 9
+ * @param {Array} a - An array of integers from 1 to 9
  */
 function generateHelper(a) {
     /* Utilizes the Durstenfeld shuffle, an optimized version of
@@ -216,4 +216,4 @@ nice = solve(board);
 console.log(nice);
 */
 testing = generate();
-console.log(isValid(testing));
+print(testing);
