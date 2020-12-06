@@ -57,6 +57,7 @@ function isValid(b) {
 function solve(b) {
     // Board must be valid
     if (isValid(b) === false) {
+        console.log("Cannot solve, board invalid.");
         return false;
     }
     // Stores all empty cells in an array, used by helper function
@@ -74,9 +75,11 @@ function solve(b) {
         if (solveHelper(b, k, empty) === true) {
             console.log(b);
             return true;
+        } else {
+            console.log("Cannot solve, no solution.");
+            return false;
         }
     }
-    return false;
 }
 
 /**
@@ -112,7 +115,7 @@ function solveHelper(b, k, empty) {
  * Generates a new Sudoku puzzle
  */
 function generate() {
-    var newBoard = [[1, 2, 3, 4, 5, 6, 7, 8, 9],
+    var newBoard = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -121,45 +124,44 @@ function generate() {
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0]];
-    /* Randomizes first row of new puzzle, then each row after is a shift
-    of the previous row by 1 or 3 cells
-    */
-    newBoard[0] = generateHelper(newBoard[0]);
-    var prev = [...newBoard[0]];
-    for (i = 1; i < 9; i++) {
-        if (i == 1 || i == 2 || i == 4 || i == 5 || i == 7 || i == 8) {
-            for (j = 0; j < 3; j++) {
-                var num = prev.shift();
-                prev.push(num);
-            }
-        } else {
-            var num = prev.shift();
-            prev.push(num);
-        }
-        newBoard[i] = prev;
-        prev = [...newBoard[i]];
-    }
-
-    /* Further randomizes puzzle by shifting order of each row in each 
-    3-row group
-    */
-    var randomized = [];
-    var counter = 0;
-    var counter2 = 0;
-    for (j = 0; j < 3; j++) {
-        for (k = 0; k < 3; k++) {
-            randomized.push(newBoard[counter]);
-            counter += 1;
-        }
-        randomized = generateHelper(randomized);
-        for (l = 0; l < 3; l++) {
-            newBoard[counter2] = randomized[l];
-            counter2 += 1;
-        }
-        randomized = [];
-    }
-
     
+    var fillCount = 35;
+    while (fillCount > 0) {
+        ranRow = Math.floor(Math.random() * 9);
+        ranCol = Math.floor(Math.random() * 9);
+        if (newBoard[ranRow][ranCol] != 0) {
+            continue;
+        }
+        newBoard[ranRow][ranCol] = Math.floor(Math.random() * 9) + 1;
+        if (isValid(newBoard) === true) {
+            fillCount -= 1;
+        } else {
+            newBoard[ranRow][ranCol] = 0;
+        }
+    }
+
+
+
+
+    /*
+    while (true) {
+        ranRow = Math.floor(Math.random() * 9);
+        ranCol = Math.floor(Math.random() * 9);
+        ranCell = newBoard[ranRow][ranCol];
+        if (ranCell == 0) {
+            continue;
+        }
+        newBoard[ranRow][ranCol] = 0;
+        copyBoard = [...newBoard];
+        solve(newBoard, true);
+        if (solCount > 1) {
+            newBoard = [...copyBoard];
+            newBoard[ranRow][ranCol] = ranCell;
+            solCount = 0;
+            break;
+        }
+    }
+    */
 
 
 
@@ -190,7 +192,6 @@ function print(b) {
 
 
 
-
 var test = [[2, 4, 6, 8, 5, 7, 9, 1, 3],
             [1, 8, 9, 6, 4, 3, 2, 7, 5],
             [5, 7, 3, 2, 9, 1, 4, 8, 6],
@@ -217,3 +218,4 @@ console.log(nice);
 */
 testing = generate();
 print(testing);
+console.log(solve(testing));
